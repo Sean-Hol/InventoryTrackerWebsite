@@ -1,0 +1,32 @@
+* {
+    margin: 0;
+    padding: 0;
+    font-family: 'Ubuntu', sans-serif;
+}
+.navbar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: sticky;
+    top: 0;
+    cursor: pointer;
+    background-color: #181827;
+    height: 5vh;
+}
+.text-big {
+    font-weight: bold;
+    font-size: 80px;
+    text-align: center;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    hyphens: auto;
+    padding: 80px;
+    height:100%;
+    width:100%;
+}
+.mainbody{
+    background: lightblue
+    height:100%;
+    width:100%;
+    position:  relative;
+}
