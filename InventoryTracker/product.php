@@ -1,12 +1,18 @@
 
 <?php
     session_start();
-    // define variables and set to empty values
+    //Expires code after 30mins
+    if (isset($_SESSION['LAST_ACTIVITY']) && (time() - $_SESSION['LAST_ACTIVITY'] > 1800)) {
+        $_SESSION = array();  
+        session_destroy();   
+    }
+    $_SESSION['LAST_ACTIVITY'] = time();
     if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
         echo "<script> window.location.replace('login.php') </script>";
         die();
     }
     $error_text="";
+    //User can submit modified quantities which are used to update the database
     if (($_SERVER["REQUEST_METHOD"] == "POST") && (isset($_POST["id"])) && (isset($_POST["quantity"]))) {
         if (empty($_POST["id"])) {
             $error_text="Invalid request";
@@ -57,6 +63,7 @@
                 top: 0;
                 cursor: pointer;
                 background-color: #131331;
+                z-index: 900;
             }
             .mainbody{
                 height:100%;

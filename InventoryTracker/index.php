@@ -1,6 +1,12 @@
 
 <?php
     session_start();
+
+    if (isset($_SESSION['LAST_ACTIVITY']) && (time() - $_SESSION['LAST_ACTIVITY'] > 1800)) {
+        $_SESSION = array();  
+        session_destroy();   
+    }
+    $_SESSION['LAST_ACTIVITY'] = time();
     //Redirect if not logged in
     if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
         echo "<script> window.location.replace('login.php') </script>";
@@ -31,6 +37,7 @@
                 top: 0;
                 cursor: pointer;
                 background-color: #131331;
+                z-index: 900;
             }
             .mainbody{
                 height:100%;
@@ -107,6 +114,7 @@
         </form>
 
         <?php 
+        //Only run if request is a POST
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $connResult = "";
             $servername = "localhost";
@@ -117,6 +125,7 @@
             if ($mysqli === false) {
                 die("Connection failed: " . mysqli_connect_error());
             }
+            // Sends search query to database using prepared statements
             $sql = "SELECT * FROM item WHERE (item.itemName LIKE ?) OR (item.id LIKE ?) OR (item.location LIKE ?)";
             if($stmt = $mysqli->prepare($sql)){
                 $stmt->bind_param("sss", $searchterms,$searchtermid,$searchtermlocation);
@@ -143,6 +152,7 @@
                 $mysqli->close();
             }
         }
+        //Prevents XSS by using input santisation
         function validateValues($value) {
             $value = trim($value);
             $value = stripslashes($value);

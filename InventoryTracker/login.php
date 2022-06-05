@@ -1,12 +1,18 @@
 <?php
     session_start();
-    // define variables and set to empty values
+    //Code for session expiration
+    if (isset($_SESSION['LAST_ACTIVITY']) && (time() - $_SESSION['LAST_ACTIVITY'] > 1800)) {
+        $_SESSION = array();  
+        session_destroy();   
+    }
+    $_SESSION['LAST_ACTIVITY'] = time();
     if(isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true){
         header('Location: topics.php', true, 300);
         die();
     }
     $errorText = "";
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        //Validate input values
         $user = $pass = "";
         $servername = "localhost";
         $SQLusername = "root";
@@ -37,6 +43,7 @@
                         $stmt->bind_result($id, $username, $hashed_password);
                         if($stmt->fetch()){
                             if(password_verify($password, $hashed_password)){
+                                //Allows user to be logged in 
                                 session_regenerate_id();
                                 $_SESSION["loggedin"] = true;
                                 $_SESSION["id"] = $id;
@@ -60,6 +67,8 @@
             }
         }
     }
+    //Prevents XSS by using input santisation
+
     function validateValues($value) {
         $value = trim($value);
         $value = stripslashes($value);
@@ -82,6 +91,7 @@
                 top: 0;
                 cursor: pointer;
                 background-color: #131331;
+                z-index: 900;
             }
             .mainbody{
                 height:100%;
@@ -114,7 +124,6 @@
         <h1 style="font-size: calc(10vw/2);color:lightgray;">Inventory Tracking</h1>
     </nav>
     <section class="mainBody">
-        <h1>Login</h1>
         <form action="login" method="post" style="width:100%;justify-content: center;">
             <input class="inputbox" type="text" name="username" placeholder="Username"><br>
             <input class="inputbox" type="password" name="password" placeholder="Password"><br>
